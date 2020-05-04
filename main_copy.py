@@ -11,6 +11,13 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Войти')
 
 
+class RegForm(FlaskForm):
+    name = StringField('ФИО', validators=[DataRequired()])
+    username = StringField('Логин', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    submit = SubmitField('Зарегестрироваться')
+
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
@@ -23,11 +30,19 @@ def login():
     return render_template('log.html', title='Авторизация', form=form)
 
 
+@app.route('/reg', methods=['GET', 'POST'])
+def reg():
+    form = RegForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    return render_template('reg.html', title='Регистрация', form=form)
+
+
 @app.route('/')
 @app.route('/index')
 def index():
-    user = "Ученик Яндекс.Лицея"
-    return render_template('index.html', username=user)
+    Tasks = [{"title": "A + B", "AC": "Не решена", "content": "Выведите сумму чисел введеных в 1 строке"}]  # получение списка задач и решенных задач
+    return render_template('index.html', title='Главная страница', Task=Tasks)
 
 
 if __name__ == '__main__':
