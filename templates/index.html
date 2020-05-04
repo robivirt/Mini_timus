@@ -1,0 +1,10 @@
+{% extends "Menu_Top.html" %}
+
+{% block content %}
+<h1>Главная страница</h1>
+<body>
+    {% for item in Task %}
+        <a><b>{{item["title"]}}</b></a> <a>{{item["AC"]}}</a>
+    {% endfor %}
+</body>
+{% endblock %}
