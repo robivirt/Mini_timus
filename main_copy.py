@@ -1,6 +1,9 @@
 from flask import render_template, Flask, url_for, redirect
+import flask
 from .login_form import LoginForm
 from .register_form import RegForm
+from data.users import Users
+from data.problems import Problems
 from data import db_session
 
 app = Flask(__name__)
@@ -35,7 +38,7 @@ def reg():
         user = User(
             name=form.name.data,
             email=form.email.data,
-            about=form.about.data
+            solve_problems = "",
         )
         user.set_password(form.password.data)
         session.add(user)
@@ -47,8 +50,16 @@ def reg():
 @app.route('/')
 @app.route('/index')
 def index():
-    Tasks = [{"title": "A + B", "AC": "Не решена",
-              "content": "Выведите сумму чисел введеных в 1 строке"}]  # получение списка задач и решенных задач
+    session = db_session.create_session_problems()
+    Tasks = []
+    temp_id = -1
+    if 'user' in flask.session:
+        temp_id = flask.session['user']
+    for problem in session.query(Problems).all():
+        AC = "Не решена"
+        if str(temp_id) in problem.who_solved.split(','):
+            AC = "Решена"
+        Tasks.append({"title": problem.title, "content": problem.content, "AC": AC})
     return render_template('index.html', title='Главная страница', Task=Tasks)
 
 

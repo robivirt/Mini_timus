@@ -9,6 +9,7 @@ class Users(SqlAlchemyBase_users):
 
     id = sqlalchemy.Column(sqlalchemy.Integer, 
                            primary_key=True, autoincrement=True)
-    nickname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-
+    username = sqlalchemy.Column(sqlalchemy.String)
+    email = sqlalchemy.Column(sqlalchemy.String)
+    password = sqlalchemy.Column(sqlalchemy.String)
     solve_problems = sqlalchemy.Column(sqlalchemy.String, default="")
