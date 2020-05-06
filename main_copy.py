@@ -1,7 +1,7 @@
 from flask import render_template, Flask, url_for, redirect
 import flask
-from .login_form import LoginForm
-from .register_form import RegForm
+from login_form import LoginForm
+from register_form import RegForm
 from data.users import Users
 from data.problems import Problems
 from data import db_session
@@ -31,11 +31,11 @@ def reg():
                                    form=form,
                                    message="Пароли не совпадают")
         session = db_session.create_session()
-        if session.query(User).filter(User.email == form.email.data).first():
+        if session.query(Users).filter(Users.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
-        user = User(
+        user = Users(
             name=form.name.data,
             email=form.email.data,
             solve_problems = "",
@@ -59,8 +59,20 @@ def index():
         AC = "Не решена"
         if str(temp_id) in problem.who_solved.split(','):
             AC = "Решена"
-        Tasks.append({"title": problem.title, "content": problem.content, "AC": AC, "id": problem.id})
-    return render_template('index.html', title='Главная страница', Task=Tasks)
+        Tasks.append({"title": problem.title, "content": problem.content, "AC": AC})
+    return render_template('index.html', Task=Tasks)
+
+
+@app.route('/problem/<numb>')
+def prob(numb):
+    session = db_session.create_session_problems()
+    content = ""
+    name = ""
+    for problems in session.query(Problems).all():
+        if int(numb) == problems.id:
+            content = problems.content
+            name = problems.title
+    return render_template('page.html', name=name, content=content)
 
 
 if __name__ == '__main__':
