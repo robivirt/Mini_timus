@@ -3,31 +3,54 @@ import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
 
-SqlAlchemyBase = dec.declarative_base()
+SqlAlchemyBase_problems = dec.declarative_base()
+SqlAlchemyBase_users = dec.declarative_base()
 
-__factory = None
+__factory_users = None
+__factory_problems = None
 
 
-def global_init(db_file):
-    global __factory
+def global_init_problems():
+    global __factory_problems
 
-    if __factory:
+    if __factory_problems:
         return
 
-    if not db_file or not db_file.strip():
-        raise Exception("Необходимо указать файл базы данных.")
-
-    conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
+    conn_str = f'sqlite:///problems.db?check_same_thread=False'
     print(f"Подключение к базе данных по адресу {conn_str}")
 
-    engine = sa.create_engine(conn_str, echo=False)
-    __factory = orm.sessionmaker(bind=engine)
+    engine_problems = sa.create_engine(conn_str, echo=False)
+    __factory_problems = orm.sessionmaker(bind=engine)
 
-    from . import __all_models
+    from . import problems
 
-    SqlAlchemyBase.metadata.create_all(engine)
+    SqlAlchemyBase_problems.metadata.create_all(engine_problems)
 
 
-def create_session() -> Session:
-    global __factory
-    return __factory()
+def create_session_problems() -> Session:
+    global __factory_problems
+    return __factory_problems()
+
+
+def global_init_users():
+    global __factory_users
+
+    if __factory_users:
+        return
+
+    conn_str = f'sqlite:///users.db?check_same_thread=False'
+    print(f"Подключение к базе данных по адресу {conn_str}")
+
+    engine_users = sa.create_engine(conn_str, echo=False)
+    __factory_users = orm.sessionmaker(bind=engine)
+
+    from . import users
+
+    SqlAlchemyBase_users.metadata.create_all(engine_users)
+
+
+
+
+def create_session_users() -> Session:
+    global __factory_users
+    return __factory_users()

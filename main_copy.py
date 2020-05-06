@@ -6,8 +6,8 @@ from data import db_session
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
-db_session.global_init('problems.db')
-db_session.global_init('users.db')
+db_session.global_init_users()
+db_session.global_init_problems()
 
 
 @app.route('/login', methods=['GET', 'POST'])
