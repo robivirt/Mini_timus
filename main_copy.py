@@ -50,7 +50,7 @@ def reg():
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = Users(
-            username=form.name.data,
+            username=form.username.data,
             email=form.email.data,
             solve_problems="",
             password=form.password.data
