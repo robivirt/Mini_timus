@@ -19,18 +19,20 @@ def login():
     if form.validate_on_submit():
         flag = True
         session = db_session.create_session_users()
-        for user in session.query(User).all():
+        for user in session.query(Users).all():
             if user.username == form.username.data:
                 flag = False
         if flag:
             return render_template('log.html', title='Авторизация', form=form,
                                    message='Такого пользователя нет')
-        for user in session.query(User).all():
+        for user in session.query(Users).all():
             if user.password == form.password.data:
                 flag = False
         if flag:
             return render_template('log.html', title='Авторизация', form=form,
                                    message='Неправильный пароль')
+        print('++++++++++++++++++++++++')
+        flask.session['user'] = form.username.data
         return redirect('/success')
     return render_template('log.html', title='Авторизация', form=form)
 
