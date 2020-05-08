@@ -1,0 +1,15 @@
+{% extends "Menu_Top.html" %}
+
+{% block content %}
+<div>
+<form class="login_form" method="post">
+    <input type="text" class="form-control" id="login" placeholder="Введите логин" name="login">
+    <input type="number" class="form-control" id="number" placeholder="Введите номер задачи" name="number">
+    <div class="form-group">
+        <label for="code">Код решения</label>
+        <textarea class="form-control" id="code" rows="10" name="code"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Записаться</button>
+</form>
+</div>
+{% endblock %}
