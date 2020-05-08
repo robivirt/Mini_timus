@@ -20,7 +20,7 @@ def global_init_problems():
     print(f"Подключение к базе данных по адресу {conn_str}")
 
     engine_problems = sa.create_engine(conn_str, echo=False)
-    __factory_problems = orm.sessionmaker(bind=engine)
+    __factory_problems = orm.sessionmaker(bind=engine_problems)
 
     from . import problems
 
@@ -42,7 +42,7 @@ def global_init_users():
     print(f"Подключение к базе данных по адресу {conn_str}")
 
     engine_users = sa.create_engine(conn_str, echo=False)
-    __factory_users = orm.sessionmaker(bind=engine)
+    __factory_users = orm.sessionmaker(bind=engine_users)
 
     from . import users
 
