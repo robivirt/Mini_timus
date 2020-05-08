@@ -17,6 +17,20 @@ db_session.global_init_problems()
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        flag = True
+        session = db_session.create_session_users()
+        for user in session.query(User).all():
+            if user.username == form.username.data:
+                flag = False
+        if flag:
+            return render_template('log.html', title='Авторизация', form=form,
+                                   message='Такого пользователя нет')
+        for user in session.query(User).all():
+            if user.password == form.password.data:
+                flag = False
+        if flag:
+            return render_template('log.html', title='Авторизация', form=form,
+                                   message='Неправильный пароль')
         return redirect('/success')
     return render_template('log.html', title='Авторизация', form=form)
 
@@ -36,11 +50,11 @@ def reg():
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = Users(
-            name=form.name.data,
+            username=form.name.data,
             email=form.email.data,
-            solve_problems = "",
+            solve_problems="",
+            password=form.password.data
         )
-        user.set_password(form.password.data)
         session.add(user)
         session.commit()
         return redirect('/login')
