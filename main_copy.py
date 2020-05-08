@@ -1,4 +1,4 @@
-from flask import render_template, Flask, url_for, redirect
+from flask import render_template, Flask, url_for, redirect, request
 import flask
 from login_form import LoginForm
 from register_form import RegForm
@@ -30,7 +30,7 @@ def reg():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
-        session = db_session.create_session()
+        session = db_session.create_session_users()
         if session.query(Users).filter(Users.email == form.email.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
@@ -73,6 +73,14 @@ def prob(numb):
             content = problems.content
             name = problems.title
     return render_template('page.html', name=name, content=content)
+
+
+@app.route('/send', methods=['POST', 'GET'])
+def send():
+    if request.method == 'GET':
+        return render_template('test.html')
+    elif request.method == 'POST':
+        return "lsfgs;l"
 
 
 if __name__ == '__main__':
