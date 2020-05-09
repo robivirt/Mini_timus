@@ -16,7 +16,7 @@ def global_init_problems():
     if __factory_problems:
         return
 
-    conn_str = f'sqlite:///problems.db?check_same_thread=False'
+    conn_str = f'sqlite:///db/problems.db?check_same_thread=False'
     print(f"Подключение к базе данных по адресу {conn_str}")
 
     engine_problems = sa.create_engine(conn_str, echo=False)
@@ -38,7 +38,7 @@ def global_init_users():
     if __factory_users:
         return
 
-    conn_str = f'sqlite:///users.db?check_same_thread=False'
+    conn_str = f'sqlite:///db/users.db?check_same_thread=False'
     print(f"Подключение к базе данных по адресу {conn_str}")
 
     engine_users = sa.create_engine(conn_str, echo=False)

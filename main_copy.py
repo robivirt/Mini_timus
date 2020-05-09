@@ -1,5 +1,5 @@
 from flask import render_template, Flask, url_for, redirect, request
-import flask
+from flask_login import LoginManager, login_user, current_user
 from login_form import LoginForm
 from register_form import RegForm
 from data.users import Users
@@ -9,8 +9,17 @@ from data import db_session
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 db_session.global_init_users()
 db_session.global_init_problems()
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    session = db_session.create_session()
+    return session.query(User).get(user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -25,14 +34,15 @@ def login():
         if flag:
             return render_template('log.html', title='Авторизация', form=form,
                                    message='Такого пользователя нет')
+        flag = True
         for user in session.query(Users).all():
             if user.password == form.password.data:
                 flag = False
         if flag:
             return render_template('log.html', title='Авторизация', form=form,
                                    message='Неправильный пароль')
-        print('++++++++++++++++++++++++')
-        flask.session['user'] = form.username.data
+        user = session.query(Users).filter(Users.username == form.username.data).first()
+        login_user(user, remember=form.remember_me.data)
         return redirect('/success')
     return render_template('log.html', title='Авторизация', form=form)
 
@@ -40,15 +50,14 @@ def login():
 @app.route('/reg', methods=['GET', 'POST'])
 def reg():
     form = RegForm()
-
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
+            return render_template('reg.html', title='Регистрация',
                                    form=form,
                                    message="Пароли не совпадают")
         session = db_session.create_session_users()
         if session.query(Users).filter(Users.email == form.email.data).first():
-            return render_template('register.html', title='Регистрация',
+            return render_template('reg.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = Users(
@@ -69,8 +78,8 @@ def index():
     session = db_session.create_session_problems()
     Tasks = []
     temp_id = -1
-    if 'user' in flask.session:
-        temp_id = flask.session['user']
+    if current_user.is_authenticated :
+        temp_id = current_user.user_id
     for problem in session.query(Problems).all():
         AC = "Не решена"
         if str(temp_id) in problem.who_solved.split(','):
