@@ -1,0 +1,22 @@
+{% extends "Menu_Top.html" %}
+
+{% block content %}
+<h1 align="CENTER">Добавление задач</h1>
+{% if current_user.is_authenticated  %}
+    <div>
+    <form class="add_form" method="post">
+        <input type="text" class="form-control" id="name" placeholder="Введите название задачи" name="name">
+        <div class="form-group">
+            <textarea class="form-control" id="task" placeholder="Условие задачи" rows="10" name="task"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </form>
+    </div>
+    <div>
+    <form class="add_form" method="post">
+        <input type="number" class="form-control" id="number" placeholder="Введите название задачи" name="number">
+        <button type="submit" class="btn btn-primary">Удалить</button>
+    </form>
+    </div>
+{ % endif % }
+{% endblock %}
