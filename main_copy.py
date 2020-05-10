@@ -18,7 +18,7 @@ db_session.global_init_problems()
 
 @login_manager.user_loader
 def load_user(user_id):
-    session = db_session.create_session()
+    session = db_session.create_session_users()
     return session.query(Users).get(user_id)
 
 
