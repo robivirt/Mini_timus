@@ -51,21 +51,13 @@ def login():
 def reg():
     form = RegForm()
     if form.validate_on_submit():
-        if form.password.data != form.password_again.data:
-            return render_template('reg.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
-        session = db_session.create_session_users()
-        if session.query(Users).filter(Users.email == form.email.data).first():
-            return render_template('reg.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
         user = Users(
             username=form.username.data,
             email=form.email.data,
             solve_problems="",
             password=form.password.data
         )
+        session = db_session.create_session_users()
         session.add(user)
         session.commit()
         return redirect('/login')
@@ -78,7 +70,7 @@ def index():
     session = db_session.create_session_problems()
     Tasks = []
     temp_id = -1
-    if current_user.is_authenticated :
+    if current_user.is_authenticated:
         temp_id = current_user.user_id
     for problem in session.query(Problems).all():
         AC = "Не решена"
