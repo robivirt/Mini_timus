@@ -1,5 +1,5 @@
-from flask import render_template, Flask, url_for, redirect, request
-from flask_login import LoginManager, login_user, current_user
+from flask import render_template, Flask, url_for, redirect, request, flash
+from flask_login import LoginManager, login_user, current_user, logout_user
 from login_form import LoginForm
 from register_form import RegForm
 from data.users import Users
@@ -18,32 +18,21 @@ db_session.global_init_problems()
 
 @login_manager.user_loader
 def load_user(user_id):
-    session = db_session.create_session()
-    return session.query(User).get(user_id)
+    session = db_session.create_session_users()
+    return session.query(Users).get(user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        flag = True
         session = db_session.create_session_users()
-        for user in session.query(Users).all():
-            if user.username == form.username.data:
-                flag = False
-        if flag:
-            return render_template('log.html', title='Авторизация', form=form,
-                                   message='Такого пользователя нет')
-        flag = True
-        for user in session.query(Users).all():
-            if user.password == form.password.data:
-                flag = False
-        if flag:
-            return render_template('log.html', title='Авторизация', form=form,
-                                   message='Неправильный пароль')
+        user = session.query(Users).filter(form.username.data==Users.username).first()
+        if user and user.password != form.password.data:
+            return render_template('log.html', title='Авторизация', form=form, error="Неправильный пароль")
         user = session.query(Users).filter(Users.username == form.username.data).first()
-        login_user(user, remember=form.remember_me.data)
-        return redirect('/success')
+        login_user(user)
+        return redirect('/')
     return render_template('log.html', title='Авторизация', form=form)
 
 
@@ -51,13 +40,13 @@ def login():
 def reg():
     form = RegForm()
     if form.validate_on_submit():
+        session = db_session.create_session_users()
         user = Users(
             username=form.username.data,
             email=form.email.data,
             solve_problems="",
             password=form.password.data
         )
-        session = db_session.create_session_users()
         session.add(user)
         session.commit()
         return redirect('/login')
@@ -71,7 +60,7 @@ def index():
     Tasks = []
     temp_id = -1
     if current_user.is_authenticated:
-        temp_id = current_user.user_id
+        temp_id = current_user.id
     for problem in session.query(Problems).all():
         AC = "Не решена"
         if str(temp_id) in problem.who_solved.split(','):
@@ -98,6 +87,12 @@ def send():
         return render_template('test.html')
     elif request.method == 'POST':
         return "lsfgs;l"
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':
