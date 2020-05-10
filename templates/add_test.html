@@ -1,0 +1,21 @@
+{% extends "Menu_Top.html" %}
+
+{% block content %}
+<h1 align="CENTER">Добавление тестов</h1>
+<div>
+<form class="add_form" method="post">
+    <input type="number" class="form-control" id="name" placeholder="Введите номер задачи" name="name">
+    <div class="form-group">
+        <textarea class="form-control" id="test" placeholder="Тест" rows="10" name="test"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Добавить</button>
+</form>
+</div>
+<div>
+<form class="add_form" method="post">
+    <input type="number" class="form-control" id="number_task" placeholder="Введите номер задачи" name="number_task">
+    <input type="number" class="form-control" id="number_test" placeholder="Введите номер теста" name="number_test">
+    <button type="submit" class="btn btn-primary">Удалить</button>
+</form>
+</div>
+{% endblock %}
