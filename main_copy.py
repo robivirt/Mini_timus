@@ -19,7 +19,7 @@ db_session.global_init_problems()
 @login_manager.user_loader
 def load_user(user_id):
     session = db_session.create_session()
-    return session.query(User).get(user_id)
+    return session.query(Users).get(user_id)
 
 
 @app.route('/login', methods=['GET', 'POST'])
