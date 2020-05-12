@@ -6,8 +6,8 @@ from data.problems import Problems
 
 
 class Add_task_form(FlaskForm):
-	title = StringField('Название задачи', validators=[DataRequired()])
-	description = TextField('Текст задачи', validators=[DataRequired()])
+	title = StringField('Название задачи', validators=[])
+	description = TextField('Текст задачи', validators=[])
 	submit = SubmitField('Отправить задачу')
 
 	def title_validate(self, title):

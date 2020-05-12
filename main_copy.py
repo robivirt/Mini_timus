@@ -94,14 +94,14 @@ def send():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index.html'))
+    return redirect('/')
 
 
 @app.route('/add_delete_task', methods=['POST', 'GET'])
 def add_delete_task():
     form = Add_task_form()
     form1 = Delete_task_form()
-    if form.validate_on_submit():
+    if form.validate_on_submit() and form.description.data and form.title.data:
         session = db_session.create_session_problems()
         session.add(Problems(title=form.title.data, content=form.description.data))
         session.commit()
