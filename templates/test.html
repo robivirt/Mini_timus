@@ -1,42 +1,46 @@
 {% extends "Menu_Top.html" %}
 
 {% block content %}
-{% if verdict %}
-	{% if verdict == "Accepted" %}
-		<div class="alert alert-success">{{ verdict }}</div>
-	{% else %}
-		<div class="alert alert-danger">{{ verdict }}</div>
+{% if current_user.is_authenticated  %}
+	{% if verdict %}
+		{% if verdict == "Accepted" %}
+			<div class="alert alert-success">{{ verdict }}</div>
+		{% else %}
+			<div class="alert alert-danger">{{ verdict }}</div>
+		{% endif %}
 	{% endif %}
+	{% if error %}
+		<div class="alert alert-danger">
+			{{ error }}
+		</div>
+	 {% endif %}
+	<form class="login_form" method="post">
+		{{ form.hidden_tag() }}
+		{{ form.csrf_token }}
+
+		<p>
+			{{ form.number_task.label }}<br>
+			{{ form.number_task(class="form-control") }}<br>
+			{% for error in form.number_task.errors %}
+				<div class="alert alert-danger", role="alert">
+					{{ error }}
+				</div>
+			{% endfor %}
+		</p>
+
+		<p>
+			{{ form.code.label }}<br>
+			{{ form.code(class="form-control", cols="35", rows="20") }}<br>
+			{% for error in form.code.errors %}
+				<div class="alert alert-danger", role="alert">
+					{{ error }}
+				</div>
+			{% endfor %}
+		</p>
+
+		<p>{{ form.submit(type="submit", class="btn btn-primary") }}
+	</form>
+{% else %}
+	<h3 align="CENTER"> <a href="/login">Вы не авторизированны</a></h3>
 {% endif %}
-{% if error %}
-    <div class="alert alert-danger">
-    	{{ error }}
-    </div>
- {% endif %}
-<form class="login_form" method="post">
-	{{ form.hidden_tag() }}
-	{{ form.csrf_token }}
-
-	<p>
-		{{ form.number_task.label }}<br>
-		{{ form.number_task(class="form-control") }}<br>
-		{% for error in form.number_task.errors %} 
-			<div class="alert alert-danger", role="alert">
-				{{ error }}
-			</div>
-		{% endfor %}
-	</p>
-
-	<p>
-		{{ form.code.label }}<br>
-		{{ form.code(class="form-control", cols="35", rows="20") }}<br>
-		{% for error in form.code.errors %} 
-			<div class="alert alert-danger", role="alert">
-				{{ error }}
-			</div>
-		{% endfor %}
-	</p>
-    
-    <p>{{ form.submit(type="submit", class="btn btn-primary") }}
-</form>
 {% endblock %}
