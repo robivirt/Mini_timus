@@ -87,7 +87,19 @@ def send():
     if request.method == 'GET':
         return render_template('test.html')
     elif request.method == 'POST':
-        return "lsfgs;l"
+        code = request.form['code'].split("\r\n")
+        number = request.form['number']
+        f = open("1.py", 'w')
+        for i in code:
+            print(i, file=f)
+        f.close()
+        flag = True
+        for i in range(): # там тест и так далее
+        if flag:
+            session = db_session.create_session_problems()
+
+
+        return redirect('/')
 
 
 @app.route('/logout')
