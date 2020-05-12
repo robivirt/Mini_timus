@@ -2,52 +2,57 @@
 
 {% block content %}
 <h1 align="CENTER">Добавление/удаление задач</h1>
-    {% if current_user.is_authenticated  %}
-        {% if current_user.id == 1 %}
-            <form class="add_form" method="post" novalidate>
-                {{ form.hidden_tag() }}
-                {{ form.csrf_token }}
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+{% endif %}
+{% if current_user.is_authenticated  %}
+    {% if current_user.id == 1 %}
+        <form class="add_form" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
 
-                <p>
-                    {{ form.title.label }}<br>
-                    {{ form.title(class="form-control") }}<br>
-                    {% for error in form.title.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </p>
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(class="form-control") }}<br>
+                {% for error in form.title.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
 
-                <p>
-                    {{ form.description.label }}<br>
-                    {{ form.description(class="form-control") }}<br>
-                    {% for error in form.description.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </p>
+            <p>
+                {{ form.description.label }}<br>
+                {{ form.description(cols="35", rows="20", class="form-control") }}<br>
+                {% for error in form.description.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
 
-                <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
-            </form>
-            <form class="add_form" method="post" novalidate>
-                {{ form1.hidden_tag() }}
-                {{ form1.csrf_token }}
-                <p>
-                    {{ form1.number.label}}<br>
-                    {{ form1.number(class="form-control") }}<br>
-                    {% for error in form1.number.errors %}
-                        <div class="alert alert-danger" role="alert">
-                            {{ error }}
-                        </div>
-                    {% endfor %}
-                </p>
-                <p>{{ form1.submit(type="submit", class="btn btn-primary") }}</p>
-            </form>
-        {% else %}
-            <h4 align="CENTER">Чтобы добавлять/добавлять задачи вы должны быть админом</h4>
-        {% endif %}
-    {% else %} 
-        <h4 align="CENTER">Чтобы добавлять/добавлять задачи вы должны авторизоваться</h4>
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+        </form>
+        <form class="add_form" method="post" novalidate>
+            {{ form1.hidden_tag() }}
+            {{ form1.csrf_token }}
+            <p>
+                {{ form1.number.label}}<br>
+                {{ form1.number(class="form-control") }}<br>
+                {% for error in form1.number.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+            <p>{{ form1.submit(type="submit", class="btn btn-primary") }}</p>
+        </form>
+    {% else %}
+        <h4 align="CENTER">Чтобы добавлять/добавлять задачи вы должны быть админом</h4>
     {% endif %}
+{% else %} 
+    <h4 align="CENTER">Чтобы добавлять/добавлять задачи вы должны авторизоваться</h4>
+{% endif %}
 {% endblock %}

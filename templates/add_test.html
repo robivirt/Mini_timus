@@ -2,20 +2,56 @@
 
 {% block content %}
 <h1 align="CENTER">Добавление тестов</h1>
-<div>
-<form class="add_form" method="post">
-    <input type="number" class="form-control" id="name" placeholder="Введите номер задачи" name="name">
-    <div class="form-group">
-        <textarea class="form-control" id="test" placeholder="Тест" rows="10" name="test"></textarea>
+
+{% if error %}
+    <div class="alert alert-danger">
+        {{ error }}
     </div>
-    <button type="submit" class="btn btn-primary">Добавить</button>
-</form>
-</div>
-<div>
-<form class="add_form" method="post">
-    <input type="number" class="form-control" id="number_task" placeholder="Введите номер задачи" name="number_task">
-    <input type="number" class="form-control" id="number_test" placeholder="Введите номер теста" name="number_test">
-    <button type="submit" class="btn btn-primary">Удалить</button>
-</form>
-</div>
+{% endif %}
+{% if current_user.is_authenticated  %}
+    {% if current_user.id == 1 %}
+		<form class="add_form" method="post">
+			{{ form.hidden_tag() }}
+			{{ form.csrf_token }}
+
+			<p>
+				{{ form.number_task.label }}<br>
+				{{ form.number_task(class="form-control") }}
+			</p>
+
+			<p> 
+				{{ form.test.label}}<br>
+				{{ form.test(class="form-control", cols="35", rows="20") }}
+			</p>
+
+			<p>
+				{{ form.answer_test.label }}<br>
+				{{ form.answer_test(class="form-control", cols="35", rows="35") }}
+			</p>
+
+			<p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+		</form>
+
+		<form class="add_form" method="post">
+			{{ form1.hidden_tag() }}
+			{{ form1.csrf_token }}
+
+			<p>
+				{{ form1.number_task.label }}<br>
+				{{ form1.number_task(class="form-control") }}
+			</p>
+
+			<p>
+				{{ form1.number_test.label }}<br>
+				{{ form1.number_test(class="form-control") }}
+			</p>
+
+			<p>{{ form1.submit(type="submit", class="btn btn-primary") }}</p>
+		</form>
+	{% else %}
+		<h4 align="CENTER">Чтобы добавлять/удалять тесты вы должны быть админом</h4>
+	{% endif %}
+{% else %}
+	<h4 align="CENTER">Чтобы добавлять/удалять тесты вы должны авторизоваться</h4>
+{% endif %}
 {% endblock %}

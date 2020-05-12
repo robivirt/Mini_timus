@@ -1,11 +1,13 @@
 from flask import render_template, Flask, url_for, redirect, request, flash
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from task_form import Add_task_form, Delete_task_form
+from test_form import Add_test_form, Delete_test_form
 from login_form import LoginForm
 from register_form import RegForm
 from data.users import Users
 from data.problems import Problems
 from data import db_session
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -94,7 +96,7 @@ def send():
             print(i, file=f)
         f.close()
         flag = True
-        for i in range(): # там тест и так далее
+        for i in range(): pass
         if flag:
             session = db_session.create_session_problems()
 
@@ -115,14 +117,46 @@ def add_delete_task():
     form1 = Delete_task_form()
     if form.validate_on_submit() and form.description.data and form.title.data:
         session = db_session.create_session_problems()
+        if session.query(Problems).filter(Problems.title==form.title.data).first():
+            return render_template("add_task.html", form=form, form1=form1, error="Задача с таким названием уже есть")
         session.add(Problems(title=form.title.data, content=form.description.data))
         session.commit()
-    if form1.validate_on_submit():
+    if form1.validate_on_submit() and form1.number.data:
         session = db_session.create_session_problems()
+        if not session.query(Problems).filter(Problems.id == form1.number.data).first():
+            return render_template("add_task.html", form=form, form1=form1, error="Задачи с таким номером нет")
         session.query(Problems).filter(Problems.id == form1.number.data).delete()
         session.commit()
     return render_template("add_task.html", form=form, form1=form1)
 
+
+@app.route('/add_delete_test', methods=['POST', 'GET'])
+def add_delete_test():
+    form = Add_test_form()
+    form1 = Delete_test_form()
+    if form.validate_on_submit() and form.number_task.data and form.test.data:
+        session = db_session.create_session_problems()
+        if not session.query(Problems).filter(Problems.id == form.number_task.data).first():
+            return render_template("add_test.html", form=form, form1=form1, error="Задачи с таким номером нет")
+        problem = session.query(Problems).filter(Problems.id == form.number_task.data).first()
+        problem.number_max_test += 1
+        session.commit()
+        f = open(f"Tests/{problem.id}_{problem.number_max_test}.txt", mode="w")
+        f.write(form.test.data)
+        f.close()
+        f1 = open(f"Tests/{problem.id}_{problem.number_max_test}_ans.txt", mode="w")
+        f1.write(form.answer_test.data)
+        f1.close()
+    if form1.validate_on_submit() and form1.number_task.data and form1.number_test.data:
+        session = db_session.create_session_problems()
+        if not session.query(Problems).filter(Problems.id == form.number_task.data).first():
+            return render_template("add_test.html", form=form, form1=form1, error="Задачи с таким номером нет")
+        if not os.path.exists(f"Tests/{form1.number_task.data}_{form1.number_test.data}.txt"):
+            return render_template("add_test.html", form=form, form1=form1, error="У этой задачи нет теста с таким номером")
+        os.remove(f"Tests/{form1.number_task.data}_{form1.number_test.data}.txt")
+        os.remove(f"Tests/{form1.number_task.data}_{form1.number_test.data}_ans.txt")
+
+    return render_template("add_test.html", form=form, form1=form1)
 
 
 if __name__ == '__main__':
