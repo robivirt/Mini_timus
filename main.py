@@ -69,7 +69,7 @@ def index():
         AC = "Не решена"
         if str(temp_id) in problem.who_solved.split(','):
             AC = "Решена"
-        Tasks.append({"title": problem.title, "content": problem.content, "AC": AC})
+        Tasks.append({"id": problem.id, "title": problem.title, "content": problem.content, "AC": AC})
     return render_template('index.html', Task=Tasks)
 
 
