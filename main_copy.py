@@ -1,5 +1,6 @@
 from flask import render_template, Flask, url_for, redirect, request, flash
 from flask_login import LoginManager, login_user, current_user, logout_user
+from task_form import Add_task_form, Delete_task_form
 from login_form import LoginForm
 from register_form import RegForm
 from data.users import Users
@@ -92,12 +93,23 @@ def send():
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('index.html'))
 
 
-@app.route('/admin')
-def admin():
-    return render_template('admin.html')
+@app.route('/add_delete_task', methods=['POST, GET'])
+def add_delete_task():
+    form = Add_task_form()
+    form1 = Delete_task_form()
+    if form.validate_on_submit():
+        session = db_session.create_session_problems()
+        session.add(Problems(title=form.title.data, decription=form.description.data))
+        session.commit()
+    if form1.validate_on_submit():
+        session = db_session.create_session_problems()
+        session.query(Problems).filter(Problems.id == form1.number.data).delete()
+        session.commit()
+    return render_template("add_task.html", form=form, form1=form1)
+
 
 
 if __name__ == '__main__':

@@ -1,22 +1,58 @@
 {% extends "Menu_Top.html" %}
 
 {% block content %}
-<h1 align="CENTER">Добавление задач</h1>
+<h1 align="CENTER">Добавление/удаление задач</h1>
 {% if current_user.is_authenticated  %}
-    <div>
-    <form class="add_form" method="post">
-        <input type="text" class="form-control" id="name" placeholder="Введите название задачи" name="name">
-        <div class="form-group">
-            <textarea class="form-control" id="task" placeholder="Условие задачи" rows="10" name="task"></textarea>
+    {% if current_user.id != 1}
+        <div>
+        <form class="add_form" method="post">
+            {{ form.hidden_tag() }}
+            {{ form.csrf_token }}
+
+            <p>
+                {{ form.title.label }}<br>
+                {{ form.title(class="form-control") }}<br>
+                {% for error in form.title.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+
+            <p>
+                {{ form.description.label }}<br>
+                {{ form.description(class="form-control") }}<br>
+                {% for error in form.description.errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </p>
+
+            <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </form>
         </div>
-        <button type="submit" class="btn btn-primary">Добавить</button>
-    </form>
-    </div>
-    <div>
-    <form class="add_form" method="post">
-        <input type="number" class="form-control" id="number" placeholder="Введите название задачи" name="number">
-        <button type="submit" class="btn btn-primary">Удалить</button>
-    </form>
-    </div>
+        <div>
+            <form class="add_form" method="post">
+                {{ form1.hidden_tag() }}
+                {{ form1.csrf_token }}
+                <p>
+                    {{ form1.number.label}}<br>
+                    {{ form1.number(class="form-control") }}<br>
+                    {% for error in form.number.errors}
+                        <div class="alert alert-danger" role="alert">
+                            {{ error }}
+                        </div>
+                    {% endfor %}
+                </p>
+                <p>{{ form1.submit(type="submit", class="btn btn-primary") }}</p>
+            </form>
+        </div>
+    {% else %}
+        <h4 align="CENTER">Чтобы добавлять/добавлять задачи вы должны быть админом</h4>
+    {% endif %}
+{% else %} 
+    <h4 align="CENTER">Чтобы добавлять/добавлять задачи вы должны быть авторизоваться</h4>
 { % endif % }
 {% endblock %}
