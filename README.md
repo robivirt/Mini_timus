@@ -1,2 +1,0 @@
-# Mini_timus
-Minitimus
