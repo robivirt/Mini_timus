@@ -1,15 +1,42 @@
 {% extends "Menu_Top.html" %}
 
 {% block content %}
-<div>
-<form class="login_form" method="post">
-    <input type="text" class="form-control" id="login" placeholder="Введите логин" name="login">
-    <input type="number" class="form-control" id="number" placeholder="Введите номер задачи" name="number">
-    <div class="form-group">
-        <label for="code">Код решения</label>
-        <textarea class="form-control" id="code" rows="10" name="code"></textarea>
+{% if verdict %}
+	{% if verdict == "Accepted" %}
+		<div class="alert alert-success">{{ verdict }}</div>
+	{% else %}
+		<div class="alert alert-danger">{{ verdict }}</div>
+	{% endif %}
+{% endif %}
+{% if error %}
+    <div class="alert alert-danger">
+    	{{ error }}
     </div>
-    <button type="submit" class="btn btn-primary">Записаться</button>
+ {% endif %}
+<form class="login_form" method="post">
+	{{ form.hidden_tag() }}
+	{{ form.csrf_token }}
+
+	<p>
+		{{ form.number_task.label }}<br>
+		{{ form.number_task(class="form-control") }}<br>
+		{% for error in form.number_task.errors %} 
+			<div class="alert alert-danger", role="alert">
+				{{ error }}
+			</div>
+		{% endfor %}
+	</p>
+
+	<p>
+		{{ form.code.label }}<br>
+		{{ form.code(class="form-control", cols="35", rows="20") }}<br>
+		{% for error in form.code.errors %} 
+			<div class="alert alert-danger", role="alert">
+				{{ error }}
+			</div>
+		{% endfor %}
+	</p>
+    
+    <p>{{ form.submit(type="submit", class="btn btn-primary") }}
 </form>
-</div>
 {% endblock %}

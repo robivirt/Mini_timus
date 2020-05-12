@@ -2,6 +2,7 @@ from flask import render_template, Flask, url_for, redirect, request, flash
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from task_form import Add_task_form, Delete_task_form
 from test_form import Add_test_form, Delete_test_form
+from send_form import SendForm
 from login_form import LoginForm
 from register_form import RegForm
 from data.users import Users
@@ -86,22 +87,34 @@ def prob(numb):
 
 @app.route('/send', methods=['POST', 'GET'])
 def send():
-    if request.method == 'GET':
-        return render_template('test.html')
-    elif request.method == 'POST':
-        code = request.form['code'].split("\r\n")
-        number = request.form['number']
-        f = open("1.py", 'w')
-        for i in code:
-            print(i, file=f)
+    form = SendForm()
+    if form.validate_on_submit():
+        session = db_session.create_session_problems()
+        if not session.query(Problems).filter(Problems.id == form.number_task.data).first():
+            return render_template("test.html", error="Нет задачи с таким номером", form=form)
+        code = form.code.data
+        f = open('1.py', mode='w')
+        f.write(code)
         f.close()
         flag = True
-        for i in range(): pass
-        if flag:
-            session = db_session.create_session_problems()
-
-
-        return redirect('/')
+        for test in os.listdir('Tests'):
+            if '_ans' not in test:
+                os.system(f'python 1.py < Tests/{test} > output.txt')
+                f1 = [i.strip() for i in open("output.txt").readlines()]
+                f2 = [i.strip() for i in open(f"Tests/{test[:-4]}_ans.txt").readlines()]
+                if f1 != f2:
+                    flag = False
+        os.remove("1.py")
+        if not flag:
+            problem = session.query(Problems).filter(Problems.id == form.number_task.data).first()
+            if not str(current_user.id) in problem.who_solved:
+                problem.who_solved += ','
+                problem.who_solved += str(current_user.id)
+                session.commit()
+            return render_template("test.html", form=form, verdict="Wrong answer")
+        else:
+            return render_template("test.html", form=form, verdict="Accepted")
+    return render_template('test.html', form=form)
 
 
 @app.route('/logout')
