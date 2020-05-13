@@ -8,6 +8,7 @@ from register_form import RegForm
 from data.users import Users
 from data.problems import Problems
 from data import db_session
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 app = Flask(__name__)
@@ -34,7 +35,7 @@ def login():
         user = session.query(Users).filter(form.username.data==Users.username).first()
         if not user:
             return render_template('log.html', title='Авторизация', form=form, error="Нет такого пользователя")
-        if user and user.password != form.password.data:
+        if user and check_password_hash(user.password, form.password.data):
             return render_template('log.html', title='Авторизация', form=form, error="Неправильный пароль")
         user = session.query(Users).filter(Users.username == form.username.data).first()
         login_user(user)
@@ -51,8 +52,8 @@ def reg():
             username=form.username.data,
             email=form.email.data,
             solve_problems="",
-            password=form.password.data
         )
+        user.set_password(form.password.data)
         session.add(user)
         session.commit()
         return redirect('/login')
