@@ -32,6 +32,8 @@ def login():
     if form.validate_on_submit():
         session = db_session.create_session_users()
         user = session.query(Users).filter(form.username.data==Users.username).first()
+        if not user:
+            return render_template('log.html', title='Авторизация', form=form, error="Нет такого пользователя")
         if user and user.password != form.password.data:
             return render_template('log.html', title='Авторизация', form=form, error="Неправильный пароль")
         user = session.query(Users).filter(Users.username == form.username.data).first()
