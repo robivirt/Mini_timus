@@ -109,13 +109,13 @@ def send():
                     flag = False
         os.remove("1.py")
         if not flag:
+            return render_template("test.html", form=form, verdict="Wrong answer")
+        else:
             problem = session.query(Problems).filter(Problems.id == form.number_task.data).first()
             if not str(current_user.id) in problem.who_solved:
                 problem.who_solved += ','
                 problem.who_solved += str(current_user.id)
                 session.commit()
-            return render_template("test.html", form=form, verdict="Wrong answer")
-        else:
             return render_template("test.html", form=form, verdict="Accepted")
     return render_template('test.html', form=form)
 
